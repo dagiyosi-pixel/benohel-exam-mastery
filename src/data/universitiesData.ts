@@ -1,0 +1,60 @@
+import type { UniversityAdmissionBenchmark } from '../types';
+
+export const UNIVERSITY_BENCHMARKS: UniversityAdmissionBenchmark[] = [
+  {
+    university: 'Addis Ababa University (AAU)',
+    city: 'Addis Ababa',
+    program: 'Doctor of Medicine (Tikur Anbessa Hospital)',
+    requiredCutoff: 545,
+    competitiveness: 'Ultra-High',
+    description: 'Ethiopia’s premier medical school. Highly competitive entrance requirement requiring top-tier scores across all science and math subjects.',
+  },
+  {
+    university: 'Addis Ababa University (AAU)',
+    city: 'Addis Ababa',
+    program: 'Software Engineering & Artificial Intelligence',
+    requiredCutoff: 525,
+    competitiveness: 'Ultra-High',
+    description: 'Leading technology program located at Addis Ababa Institute of Technology (AAiT). Trains top software architects and AI researchers.',
+  },
+  {
+    university: 'Addis Ababa Science & Technology University (AASTU)',
+    city: 'Kilinto, Addis Ababa',
+    program: 'Electrical, Computer & Mechanical Engineering',
+    requiredCutoff: 495,
+    competitiveness: 'High',
+    description: 'Specialized national institute dedicated to science and engineering innovation with modern research centers.',
+  },
+  {
+    university: 'Adama Science & Technology University (ASTU)',
+    city: 'Adama',
+    program: 'Applied Sciences, Robotics & Engineering',
+    requiredCutoff: 485,
+    competitiveness: 'High',
+    description: 'Leading center of excellence in industrial technology, mechatronics, and applied physical sciences.',
+  },
+  {
+    university: 'Jimma University (JU)',
+    city: 'Jimma',
+    program: 'Medicine & Health Sciences',
+    requiredCutoff: 475,
+    competitiveness: 'High',
+    description: 'Internationally recognized for community-based medical education and innovative health programs.',
+  },
+  {
+    university: 'University of Gondar (UoG)',
+    city: 'Gondar',
+    program: 'Medicine & Public Health',
+    requiredCutoff: 460,
+    competitiveness: 'Moderate',
+    description: 'Pioneering health institution with deep historic excellence in medical training.',
+  },
+  {
+    university: 'Hawassa University (HU)',
+    city: 'Hawassa',
+    program: 'Natural & Computational Sciences',
+    requiredCutoff: 440,
+    competitiveness: 'Moderate',
+    description: 'Renowned lakeside campus offering rigorous training across STEM and agricultural sciences.',
+  },
+];
