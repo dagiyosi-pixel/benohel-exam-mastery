@@ -8,8 +8,10 @@ import type {
   DailyLog,
   AuditFlag,
   RankData,
+  DailyQuest,
 } from '../types';
 import { GRADE_9_CURRICULUM } from '../data/curriculumGrade9';
+import { GRADE_9_DAILY_QUESTS } from '../data/dailyQuestsGrade9';
 
 interface AppContextType {
   currentUserRole: UserRole;
@@ -20,6 +22,9 @@ interface AppContextType {
   rewards: PromisedReward[];
   dailyLogs: DailyLog[];
   auditLogs: AuditFlag[];
+  dailyQuests: DailyQuest[];
+  activeDailyQuest: DailyQuest | undefined;
+  verifyDailyQuest: (dayNumber: number, score: number) => void;
   hasCheckedInToday: boolean;
   submitDailyCheckIn: (data: { studyMinutes: number; subjects: string[]; reflectionEasy: string; reflectionChallenging: string }) => void;
   submitQuizAttempt: (unitId: string, score: number, passed: boolean, tabSwitchesCount: number) => void;
@@ -205,6 +210,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : INITIAL_AUDIT_LOGS;
   });
 
+  const [dailyQuests, setDailyQuests] = useState<DailyQuest[]>(() => {
+    const saved = localStorage.getItem(`${STORAGE_KEY}_daily_quests`);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved daily quests', e);
+      }
+    }
+    return GRADE_9_DAILY_QUESTS;
+  });
+
+  const activeDailyQuest =
+    dailyQuests.find((q) => q.status === 'active') ||
+    dailyQuests.find((q) => q.status === 'locked') ||
+    dailyQuests[dailyQuests.length - 1];
+
   const [themeMode, setThemeMode] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('benohel_theme_mode');
     return (saved === 'light' || saved === 'dark') ? saved : 'dark';
@@ -256,6 +278,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem(`${STORAGE_KEY}_audit`, JSON.stringify(auditLogs));
   }, [auditLogs]);
+
+  useEffect(() => {
+    localStorage.setItem(`${STORAGE_KEY}_daily_quests`, JSON.stringify(dailyQuests));
+  }, [dailyQuests]);
+
+  const verifyDailyQuest = (dayNumber: number, score: number) => {
+    setDailyQuests((prev) => {
+      return prev.map((q) => {
+        if (q.dayNumber === dayNumber) {
+          return {
+            ...q,
+            status: 'completed' as const,
+            quizScore: score,
+            quizPassed: true,
+            verifiedAt: new Date().toISOString(),
+            attemptsCount: (q.attemptsCount || 0) + 1,
+          };
+        }
+        if (q.dayNumber === dayNumber + 1 && q.status === 'locked') {
+          return {
+            ...q,
+            status: 'active' as const,
+          };
+        }
+        return q;
+      });
+    });
+
+    // Update student XP, level, study time, streak
+    setStudentProfile((prev) => {
+      const today = new Date().toISOString().split('T')[0];
+      const isNewDay = prev.lastCheckInDate !== today;
+      const newStreak = isNewDay ? prev.currentStreak + 1 : prev.currentStreak;
+      const earnedXp = 100;
+      const totalXp = prev.xp + earnedXp;
+
+      return {
+        ...prev,
+        currentStreak: newStreak,
+        longestStreak: Math.max(newStreak, prev.longestStreak),
+        lastCheckInDate: today,
+        xp: totalXp,
+        level: calculateLevel(totalXp),
+        totalStudyMinutes: prev.totalStudyMinutes + 45,
+      };
+    });
+
+    const auditEntry: AuditFlag = {
+      id: `aud-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      type: 'quiz_passed',
+      details: `Day ${dayNumber} Verified: Score ${score}%. Day ${dayNumber + 1} quest unlocked!`,
+      severity: 'info',
+    };
+    setAuditLogs((prev) => [auditEntry, ...prev]);
+  };
 
   const todayStr = new Date().toISOString().split('T')[0];
   const hasCheckedInToday = studentProfile.lastCheckInDate === todayStr;
@@ -686,6 +764,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setRewards(INITIAL_REWARDS);
     setDailyLogs([]);
     setAuditLogs(INITIAL_AUDIT_LOGS);
+    setDailyQuests(GRADE_9_DAILY_QUESTS);
   };
 
   const exportDatabaseJSON = () => {
@@ -696,6 +775,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       rewards,
       dailyLogs,
       auditLogs,
+      dailyQuests,
     }, null, 2);
   };
 
@@ -708,6 +788,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (data.rewards) setRewards(data.rewards);
       if (data.dailyLogs) setDailyLogs(data.dailyLogs);
       if (data.auditLogs) setAuditLogs(data.auditLogs);
+      if (data.dailyQuests) setDailyQuests(data.dailyQuests);
       return true;
     } catch (e) {
       console.error('Failed to import database JSON', e);
@@ -726,6 +807,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         rewards,
         dailyLogs,
         auditLogs,
+        dailyQuests,
+        activeDailyQuest,
+        verifyDailyQuest,
         hasCheckedInToday,
         submitDailyCheckIn,
         submitQuizAttempt,

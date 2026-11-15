@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
+import { GoogleLoginModal } from '../auth/GoogleLoginModal';
 import {
   Flame,
   Award,
   Sparkles,
-  Download,
-  Upload,
-  RefreshCw,
   Clock,
   Volume2,
   VolumeX,
   Palette,
   Sun,
   Moon,
+  LogIn,
+  UserCheck,
+  RefreshCw,
+  Download,
+  Upload,
 } from 'lucide-react';
 import {
   NarutoAvatar,
@@ -34,6 +38,8 @@ export const Navbar: React.FC = () => {
     toggleThemeMode,
   } = useApp();
 
+  const { user } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showDataModal, setShowDataModal] = useState(false);
   const [importText, setImportText] = useState('');
   const [importStatus, setImportStatus] = useState<string | null>(null);
@@ -85,109 +91,108 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-md border-b-2 border-amber-500/40 shadow-2xl">
-      {/* PUBG Mobile Tactical Top HUD Ribbon */}
-      <div className="bg-black/90 border-b border-amber-500/20 px-3 py-1 flex items-center justify-between text-[10px] font-mono tracking-wider uppercase text-slate-400 select-none overflow-x-auto no-scrollbar">
+    <header className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b-2 border-amber-500/40 shadow-2xl">
+      {/* Tactical Top Ribbon */}
+      <div className="bg-black/95 border-b border-amber-500/20 px-3 py-1 flex items-center justify-between text-[10px] font-mono tracking-wider uppercase text-slate-400 select-none overflow-x-auto no-scrollbar">
         <div className="flex items-center space-x-3 flex-shrink-0">
           <span className="flex items-center space-x-1.5 text-emerald-400 font-bold">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50" />
-            <span>18ms [SATELLITE LINK]</span>
+            <span>CLOUD SYNC ACTIVE</span>
           </span>
           <span className="text-slate-700">|</span>
-          <span className="text-amber-400 font-bold">DROP ZONE: ETHIOPIA // 700M LINK</span>
+          <span className="text-amber-400 font-bold">ETHIOPIA MOE GRADE 9 // 700M LINK</span>
           <span className="text-slate-700 hidden sm:inline">|</span>
           <span className="hidden sm:inline text-slate-300">COORDINATOR: MASTER DAGIYOSI</span>
         </div>
 
-        {/* Center Compass Ribbon */}
-        <div className="hidden lg:flex items-center space-x-2 text-slate-400 font-bold px-3 py-0.5 bg-slate-900/80 rounded border border-slate-800 tracking-widest text-[9px]">
-          <span className="text-slate-600">270</span>
-          <span className="text-amber-400 font-black">W</span>
-          <span className="text-slate-600">300</span>
-          <span className="text-amber-300 font-black">NW</span>
-          <span className="text-slate-600">330</span>
-          <span className="text-amber-400 font-black">N</span>
-          <span className="text-slate-600">030</span>
-          <span className="text-amber-300 font-black">NE</span>
-          <span className="text-slate-600">090</span>
-          <span className="text-amber-400 font-black">E</span>
-        </div>
-
-        <div className="flex items-center space-x-3 flex-shrink-0">
-          <span className="text-amber-300 font-bold">SQUAD: 2/2 ALIVE</span>
-          <span className="text-slate-700">|</span>
-          <span className="text-emerald-400 font-bold">RP S9: ACTIVE</span>
+        {/* Google User Status */}
+        <div className="flex items-center space-x-2 flex-shrink-0">
+          <button
+            onClick={() => {
+              soundFX.playTacticalClick();
+              setShowLoginModal(true);
+            }}
+            className="flex items-center space-x-1 px-2.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-amber-400 text-[10px] text-slate-200 transition"
+          >
+            {user ? (
+              <>
+                <UserCheck className="w-3 h-3 text-emerald-400" />
+                <span className="font-bold text-amber-300 max-w-[130px] truncate">{user.email}</span>
+              </>
+            ) : (
+              <>
+                <LogIn className="w-3 h-3 text-amber-400" />
+                <span>Sign in with Google</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Brand & Crest - Naruto x PUBG Mobile Hybrid Style */}
-          <div className="flex items-center space-x-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-18">
+          {/* Brand & Crest */}
+          <div className="flex items-center space-x-2.5 sm:space-x-3">
             <div className="relative flex-shrink-0">
-              {/* Naruto Uzumaki Avatar */}
-              <NarutoAvatar size={46} className="border-2 border-amber-400 pubg-glow-gold" />
-              {/* Overlaid PUBG Level 3 Helmet Badge */}
+              <NarutoAvatar size={40} className="border-2 border-amber-400 pubg-glow-gold" />
               <div className="absolute -bottom-1 -right-1">
-                <PubgHelmetAvatar size={22} className="border border-black shadow" />
+                <PubgHelmetAvatar size={18} className="border border-black shadow" />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-mono font-black tracking-wider text-base sm:text-xl text-slate-100 uppercase flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1.5">
+                <span className="font-mono font-black tracking-wider text-sm sm:text-lg text-slate-100 uppercase flex items-center space-x-1">
                   <span>BENOHEL YOSEF</span>
-                  <KonohaWillOfFireBadge size={16} className="inline animate-spin-slow" />
+                  <KonohaWillOfFireBadge size={14} className="inline animate-spin-slow" />
                 </span>
-                <span className="hidden sm:inline-block px-2 py-0.5 text-[9px] font-mono font-black uppercase rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                  GENIN • CROWN CADET
+                <span className="hidden md:inline-block px-1.5 py-0.5 text-[9px] font-mono font-black uppercase rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  GENIN CADET
                 </span>
               </div>
-              <p className="text-xs text-slate-300 flex items-center space-x-1 font-mono">
+              <p className="text-[11px] text-slate-300 flex items-center space-x-1 font-mono">
                 <span className="text-amber-400 font-bold hidden xs:inline">NINDO:</span>
-                <span className="text-slate-300">"Never Run Away!"</span>
-                <span className="text-slate-500 hidden md:inline">• Master Dagiyosi 700M Overwatch</span>
+                <span className="text-slate-300">"Never Give Up!"</span>
+                <span className="text-slate-500 hidden sm:inline">• Master Dagi 700M Overwatch</span>
               </p>
             </div>
           </div>
 
-          {/* Quick Stats: Streak, Level, Hours */}
-          <div className="hidden lg:flex items-center space-x-5">
+          {/* Quick Stats: Streak, Hours, Level */}
+          <div className="hidden lg:flex items-center space-x-4 font-mono">
             {/* Streak Counter */}
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-amber-500/30 shadow-inner">
-              <div className="relative">
-                <Flame className="w-5 h-5 text-amber-400 animate-pulse" />
-              </div>
+            <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-slate-900/90 border border-amber-500/30">
+              <Flame className="w-4 h-4 text-amber-400 animate-pulse" />
               <div>
-                <div className="text-[10px] text-slate-400 font-mono uppercase leading-none">Will of Fire Streak</div>
-                <div className="text-sm font-mono font-black text-amber-300">
+                <div className="text-[9px] text-slate-400 uppercase leading-none">Streak</div>
+                <div className="text-xs font-black text-amber-300">
                   {studentProfile.currentStreak} DAYS
                 </div>
               </div>
             </div>
 
             {/* Total Study Hours */}
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-cyan-500/30">
-              <Clock className="w-5 h-5 text-cyan-400" />
+            <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-slate-900/90 border border-cyan-500/30">
+              <Clock className="w-4 h-4 text-cyan-400" />
               <div>
-                <div className="text-[10px] text-slate-400 font-mono uppercase leading-none">Chakra Focus</div>
-                <div className="text-sm font-mono font-black text-cyan-300">
+                <div className="text-[9px] text-slate-400 uppercase leading-none">Study Hours</div>
+                <div className="text-xs font-black text-cyan-300">
                   {Math.floor(studentProfile.totalStudyMinutes / 60)}H {studentProfile.totalStudyMinutes % 60}M
                 </div>
               </div>
             </div>
 
-            {/* Level & XP / Royale Pass Meter */}
-            <div className="flex items-center space-x-3 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-amber-500/20">
-              <Award className="w-5 h-5 text-amber-400" />
-              <div className="w-28">
-                <div className="flex justify-between text-xs mb-1 font-mono">
-                  <span className="font-bold text-amber-300">RP LVL {studentProfile.level}</span>
-                  <span className="text-slate-400 text-[10px]">{currentLevelXp}/{300} BP</span>
+            {/* Level & XP */}
+            <div className="flex items-center space-x-2.5 px-3 py-1 rounded-lg bg-slate-900/90 border border-amber-500/20">
+              <Award className="w-4 h-4 text-amber-400" />
+              <div className="w-24">
+                <div className="flex justify-between text-[10px] mb-0.5">
+                  <span className="font-bold text-amber-300">LVL {studentProfile.level}</span>
+                  <span className="text-slate-400 text-[9px]">{currentLevelXp}/{300}</span>
                 </div>
-                <div className="w-full h-2 bg-slate-800 rounded-xs overflow-hidden border border-slate-700">
+                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-500 shadow-sm shadow-amber-400"
+                    className="h-full bg-gradient-to-r from-amber-500 to-yellow-400"
                     style={{ width: `${xpPercentage}%` }}
                   />
                 </div>
@@ -195,25 +200,24 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls: Role Switcher & Sync */}
-          <div className="flex items-center space-x-2">
-            {/* Role Switcher Pill with Naruto and Kakashi Avatars */}
-            <div className="inline-flex rounded-lg p-1 bg-slate-950/90 border border-slate-800 shadow-inner">
+          {/* Right Controls */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
+            {/* Role Switcher Pill */}
+            <div className="inline-flex rounded-lg p-0.5 bg-slate-950/90 border border-slate-800 shadow-inner">
               <button
                 onClick={() => {
                   soundFX.playTacticalClick();
                   setCurrentUserRole('student');
                 }}
                 data-testid="btn-role-student"
-                aria-label="Switch to Benohel Student View"
-                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-mono font-bold transition-all ${
+                className={`flex items-center space-x-1 px-2 py-1 rounded-md text-[11px] font-mono font-bold transition-all ${
                   currentUserRole === 'student'
-                    ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-md shadow-amber-500/30'
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <NarutoAvatar size={18} />
-                <span>Benohel</span>
+                <NarutoAvatar size={16} />
+                <span className="hidden xs:inline">Student</span>
               </button>
 
               <button
@@ -222,63 +226,61 @@ export const Navbar: React.FC = () => {
                   setCurrentUserRole('master_admin');
                 }}
                 data-testid="btn-role-master"
-                aria-label="Switch to Master Dagiyosi Mentor View"
-                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-mono font-bold transition-all ${
+                className={`flex items-center space-x-1 px-2 py-1 rounded-md text-[11px] font-mono font-bold transition-all ${
                   currentUserRole === 'master_admin'
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md shadow-cyan-500/30'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md'
                     : 'text-slate-400 hover:text-cyan-400'
                 }`}
               >
-                <KakashiAvatar size={18} />
-                <span className="hidden xs:inline">Master Dagi</span>
-                <span className="xs:hidden">Dagi</span>
+                <KakashiAvatar size={16} />
+                <span className="hidden xs:inline">Master</span>
               </button>
             </div>
 
-            {/* Light / Dark Mode Toggle */}
+            {/* Light / Dark Mode */}
             <button
               onClick={() => {
                 soundFX.playTacticalClick();
                 toggleThemeMode();
               }}
               title={themeMode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-amber-400 text-amber-400 hover:text-amber-300 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-amber-400 text-amber-400 transition"
             >
-              {themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {themeMode === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             </button>
 
-            {/* Battleground Theme Switcher (Erangel / Cyber / Storm) */}
+            {/* Wallpaper Theme Switcher */}
             <button
               onClick={handleCycleTheme}
-              title="Switch Battleground Theme (Erangel / Cyber / Storm)"
-              className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-amber-400 text-slate-400 hover:text-amber-300 transition-colors"
+              title="Cycle Theme (Erangel / Cyber / Storm)"
+              className="p-1.5 sm:p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-amber-400 text-slate-400 hover:text-amber-300 transition"
             >
-              <Palette className="w-4 h-4" />
+              <Palette className="w-3.5 h-3.5" />
             </button>
 
-            {/* Audio SFX Toggle Button */}
+            {/* Audio Mute */}
             <button
               onClick={handleToggleSound}
-              title={isMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
-              className={`p-2 rounded-lg border text-xs font-mono transition-colors ${
+              title={isMuted ? 'Unmute' : 'Mute'}
+              className={`p-1.5 sm:p-2 rounded-lg border text-xs ${
                 isMuted
-                  ? 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
-                  : 'bg-amber-500/20 border-amber-400 text-amber-300 pubg-glow-gold'
+                  ? 'bg-slate-900 border-slate-800 text-slate-500'
+                  : 'bg-amber-500/20 border-amber-400 text-amber-300'
               }`}
             >
-              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 animate-pulse" />}
+              {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
             </button>
 
-            {/* Cloud Sync & Backup Modal Toggle */}
+            {/* Backup / Sync */}
             <button
               onClick={() => {
                 soundFX.playTacticalClick();
                 setShowDataModal(true);
               }}
               title="Cloud Sync & Backup"
-              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-amber-300 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-amber-300 transition"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -286,13 +288,13 @@ export const Navbar: React.FC = () => {
 
       {/* Cloud Sync & Backup Modal */}
       {showDataModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in font-mono">
+          <div className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
             <div className="flex justify-between items-center border-b border-slate-800 pb-3">
               <div className="flex items-center space-x-2">
                 <Sparkles className="w-5 h-5 text-amber-400" />
-                <h3 className="text-lg font-bold text-slate-100 font-serif">
-                  700-Mile Cloud Sync & Database
+                <h3 className="text-base font-bold text-slate-100 uppercase">
+                  700-Mile Cloud Sync & Backup
                 </h3>
               </div>
               <button
@@ -306,8 +308,8 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Progress is continuously preserved in local storage and synced. You can export a snapshot backup file or paste an update package between devices across the distance.
+            <p className="text-xs text-slate-300 leading-relaxed font-sans">
+              All 180 daily quests, verified quiz scores, and focus hours are continuously preserved and saved to your Google account. You can export a snapshot backup file or paste an update package between devices across the distance.
             </p>
 
             <div className="grid grid-cols-2 gap-3">
@@ -316,9 +318,9 @@ export const Navbar: React.FC = () => {
                   soundFX.playTacticalClick();
                   handleExport();
                 }}
-                className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-sm font-semibold transition"
+                className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold transition uppercase"
               >
-                <Download className="w-4 h-4 text-amber-400" />
+                <Download className="w-3.5 h-3.5 text-amber-400" />
                 <span>Export Backup</span>
               </button>
               <button
@@ -329,14 +331,14 @@ export const Navbar: React.FC = () => {
                     setShowDataModal(false);
                   }
                 }}
-                className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/40 text-rose-300 text-sm font-semibold transition"
+                className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/40 text-rose-300 text-xs font-bold transition uppercase"
               >
                 <span>Reset Defaults</span>
               </button>
             </div>
 
             <div className="space-y-2 pt-2 border-t border-slate-800">
-              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
                 <span>Import Database JSON</span>
                 {importStatus && <span className="text-emerald-400">{importStatus}</span>}
               </label>
@@ -353,15 +355,21 @@ export const Navbar: React.FC = () => {
                   handleImport();
                 }}
                 disabled={!importText.trim()}
-                className="w-full flex items-center justify-center space-x-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs transition"
+                className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider transition"
               >
-                <Upload className="w-4 h-4" />
+                <Upload className="w-3.5 h-3.5" />
                 <span>Apply & Synchronize Database</span>
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Google Login Modal */}
+      <GoogleLoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </header>
   );
 };

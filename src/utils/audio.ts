@@ -118,6 +118,30 @@ class SoundEffectsEngine {
   }
 
   /**
+   * Tactical Alert / Warning Buzzer (When quiz failed or integrity warning)
+   */
+  public playAlertWarning() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(180, ctx.currentTime);
+    osc.frequency.setValueAtTime(140, ctx.currentTime + 0.15);
+
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.35);
+  }
+
+  /**
    * Airdrop Loot Crate Unlock Chime
    */
   public playAirdropUnlock() {

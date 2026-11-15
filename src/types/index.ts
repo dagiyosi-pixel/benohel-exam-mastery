@@ -1,5 +1,35 @@
 export type UserRole = 'student' | 'master_admin';
 
+export interface AuthenticatedUser {
+  email: string;
+  name: string;
+  role: UserRole;
+  photoUrl?: string;
+  isSignedIn: boolean;
+}
+
+export interface DailyQuest {
+  id: string; // e.g. "quest-day-1"
+  dayNumber: number; // 1 to 180
+  sprintNumber: number; // 1 to 5
+  sprintTitle: string; // e.g. "Sprint 1: Semester 1 Foundations"
+  subjectId: string; // 'g9-math', 'g9-physics', etc.
+  subjectName: string; // 'Mathematics', 'Physics', etc.
+  unitNumber: number;
+  unitTitle: string;
+  chapterCode: string; // e.g. "1.1"
+  chapterTitle: string;
+  textbookPages: string; // e.g. "Student Textbook pp. 1–8"
+  microGoal: string; // Specific daily task to complete
+  estimatedMinutes: number; // e.g. 45
+  status: 'locked' | 'active' | 'completed';
+  quizQuestions: QuizQuestion[];
+  quizScore: number | null;
+  quizPassed: boolean;
+  verifiedAt: string | null;
+  attemptsCount: number;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
